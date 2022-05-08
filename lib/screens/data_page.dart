@@ -27,6 +27,32 @@ class _DataPageState extends State<DataPage> {
               ],
             ),
           ),
+          actions: <Widget>[
+            BlocBuilder<DrinkBloc, DrinkState>(
+              builder: (context, state) {
+                if (state is DrinkLoaded) {
+                  return IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      showSearch(
+                        context: context,
+                        delegate: CustomSearchDelegate(data: state.drinkResponse.drinks!),
+                      );
+                    },
+                  );
+                }
+                return IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: CustomSearchDelegate(data: []),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
         ),
         body: TabBarView(
           children: [
@@ -139,5 +165,44 @@ class DrinkData extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+void showSearchWindow(List<dynamic> data) {}
+
+class CustomSearchDelegate extends SearchDelegate {
+  final List<dynamic> data;
+
+  CustomSearchDelegate({required this.data});
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Container();
   }
 }

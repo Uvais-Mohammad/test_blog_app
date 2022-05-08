@@ -20,7 +20,7 @@ class DataRepository {
 
       var jsonResponse = json.decode(responseString);
       var data = DrinkResponse.fromJson(jsonResponse);
-      Preference.setString('drink', data.toJson().toString());
+      Preference.setString('drink', jsonEncode(data.toJson()));
       return data;
     } else {
       throw Exception('Failed to load post');
@@ -36,7 +36,7 @@ class DataRepository {
       var responseString = await response.stream.bytesToString();
       var jsonResponse = json.decode(responseString);
       var data = UserResponse.fromJson(jsonResponse);
-      Preference.setString('user', data.toJson().toString());
+      Preference.setString('user', jsonEncode(data.toJson()));
       return data;
     } else {
       throw Exception('Failed to load post');
