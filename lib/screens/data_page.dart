@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:new_demo/blocs/drink/drink_bloc.dart';
 import 'package:new_demo/blocs/user/user_bloc.dart';
+import 'package:new_demo/models/drink_response.dart';
 
 class DataPage extends StatefulWidget {
   const DataPage({Key? key}) : super(key: key);
@@ -36,7 +37,8 @@ class _DataPageState extends State<DataPage> {
                     onPressed: () {
                       showSearch(
                         context: context,
-                        delegate: CustomSearchDelegate(data: state.drinkResponse.drinks!),
+                        delegate: DrinkSearchDelegate(
+                            data: state.drinkResponse.drinks!),
                       );
                     },
                   );
@@ -46,7 +48,7 @@ class _DataPageState extends State<DataPage> {
                   onPressed: () {
                     showSearch(
                       context: context,
-                      delegate: CustomSearchDelegate(data: []),
+                      delegate: DrinkSearchDelegate(data: []),
                     );
                   },
                 );
@@ -54,7 +56,7 @@ class _DataPageState extends State<DataPage> {
             ),
           ],
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             DrinkData(),
             UserData(),
@@ -170,10 +172,10 @@ class DrinkData extends StatelessWidget {
 
 void showSearchWindow(List<dynamic> data) {}
 
-class CustomSearchDelegate extends SearchDelegate {
-  final List<dynamic> data;
+class DrinkSearchDelegate extends SearchDelegate {
+  final List<Drinks> data;
 
-  CustomSearchDelegate({required this.data});
+  DrinkSearchDelegate({required this.data});
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -203,6 +205,25 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Container();
+    final list = query.isEmpty
+        ? data
+        : data
+            .where((element) => element.strDrink!.toLowerCase().contains(query))
+            .toList();
+    return ListView.separated(
+      key: const PageStorageKey<String>('My Trips'),
+      itemCount: list.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+            title: Text(list[index].strDrink!),
+            subtitle: Text(list[index].strCategory!),
+            leading: Image.network(
+              list[index].strDrinkThumb!,
+            ));
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(height: 0);
+      },
+    );
   }
 }
